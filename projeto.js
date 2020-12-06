@@ -93,6 +93,7 @@ const appendListItem = ({ checked, text }) => {
       checkbox.removeAttribute("checked");
     }
   });
+
   item.append(checkbox);
 
   var textarea = document.createElement("textarea");
@@ -108,6 +109,7 @@ const appendListItem = ({ checked, text }) => {
       removeItem();
     }
   });
+
   item.append(textarea);
 
   var removalWrapper = document.createElement("div");
@@ -182,7 +184,6 @@ document.addEventListener("keydown", (event) => {
     createNewItem();
   }
 });
-
 const saveList = () => {
   const list = document.getElementById("list");
   var serializedList = [];
@@ -212,6 +213,13 @@ window.addEventListener("load", () => {
   const list = document.getElementById("list");
   const changeObserver = new MutationObserver((mutationList, observer) => {
     for (const mutation of mutationList) {
+      // Well, the textarea part shouldn't work, right?
+      // Right. The catch is that I resize them on change
+      // by setting their style attribute.
+      // That means an attribute mutation! hurray!
+      //
+      // It would be best to set an explicit attribute
+      // on change, but I'll roll with this.
       if (["UL", "INPUT", "TEXTAREA"].includes(mutation.target.tagName)) {
         saveList();
         break;
