@@ -1,24 +1,38 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en-US">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport"
+	  content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="projeto.css">
     <script src="projeto.js" defer="true"></script>
 
     <link rel="icon" href="images/notepadEmoji.svg">
-    <title> Lista de tarefas </title>
+    <title> To-do list </title>
   </head>
 
   <body>
-    <main>
+    <header>
       <h1> ✔️ </h1>
-      
-      <div id="listWrapper">
-	<ul id="list"></ul>
-      </div>
+    </header>
 
+    <main>
+      <div id="list-wrapper">
+	<ul id="list"></ul>
+
+	<div id="new-item-wrapper"
+	     tabindex="0"
+	     role="button"
+	     aria-label="Add a new list item.">
+	  <img class="plus-symbol"
+	       src="images/plusEmoji.svg"
+	       alt="Plus symbol.">
+
+	  <textarea placeholder="new item" readonly></textarea>
+	</div>
+      </div>
     </main>
+
   </body>
 </html>

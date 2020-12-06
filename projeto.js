@@ -1,21 +1,102 @@
 const resizeElement = (element) => {
-  // o reset é necessário pra textareas diminuirem...
+  // Textareas need to be reset to shrink.
   element.style.height = 0;
   element.style.height = element.scrollHeight + "px";
 };
 
+var itemBeingDragged;
+
+// Input: an object describing the item to be appended.
+// Output: the item appended.
 const appendListItem = ({ checked, text }) => {
   const list = document.getElementById("list");
 
   var item = document.createElement("li");
-  const removeItem = () => list.removeChild(item);
+  const removeItem = () => item.remove();
+
+  var dragHandle = document.createElement("img");
+  dragHandle.className = "drag-handle";
+  dragHandle.src = "images/blackCircleEmoji.svg";
+  dragHandle.alt = "Drag handle.";
+  dragHandle.draggable = false;
+
+  dragHandle.addEventListener("mousedown", (event) => {
+    item.setAttribute("draggable", "true");
+    itemBeingDragged = item;
+  });
+
+  item.addEventListener("dragstart", (event) => {
+    var transparentPixel = new Image(1, 1);
+
+    transparentPixel.src =
+      "data:image/png;base64,Qk2OAAAAAAAAAIoAAAB8AAAAAQAAAAEAAAABACAAAwAAAAQAAAAjLgAAIy4AAAAAAAAAAAAAAAD/AAD/AAD/AAAAAAAA/0JHUnMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAA////AA==";
+
+    // Even though it's a transparent pixel,
+    // some browsers still draw a frame around
+    // the drag image. Sigh.
+    // Since I don't want a drag image,
+    // I placed a high x and y offset (9999).
+    event.dataTransfer.setDragImage(transparentPixel, 9999, 9999);
+    event.dataTransfer.dropEffect = "move";
+  });
+
+  item.addEventListener("dragover", (event) => {
+    // So the drop visually happens.
+    event.preventDefault();
+
+    if (itemBeingDragged == item) {
+      return;
+    }
+
+    const itemRectangle = item.getBoundingClientRect();
+    const itemMidHeight = itemRectangle.top + itemRectangle.height / 2;
+
+    if (event.clientY < itemMidHeight) {
+      if (itemBeingDragged != item.previousSibling) {
+        list.insertBefore(itemBeingDragged, item);
+      }
+    } else if (itemBeingDragged != item.nextSibling) {
+      list.insertBefore(itemBeingDragged, item.nextSibling);
+    }
+  });
+
+  // So the drag image doesn't try to fly back
+  // if the drag is canceled.
+  window.addEventListener("dragover", (event) => {
+    event.preventDefault();
+  });
+
+  item.addEventListener("dragend", () => {
+    item.removeAttribute("draggable");
+    itemBeingDragged = undefined;
+  });
+
+  item.addEventListener("mouseup", () => {
+    item.removeAttribute("draggable");
+    itemBeingDragged = undefined;
+  });
+
+  item.append(dragHandle);
 
   var checkbox = document.createElement("input");
   checkbox.type = "checkbox";
-  checkbox.checked = checked;
+  // This is a workaround so MutationObservers
+  // are able to observe checkbox state.
+  if (checked) {
+    checkbox.checked = true;
+    checkbox.setAttribute("checked", "true");
+  }
+  checkbox.addEventListener("click", () => {
+    if (checkbox.checked) {
+      checkbox.setAttribute("checked", "true");
+    } else {
+      checkbox.removeAttribute("checked");
+    }
+  });
   item.append(checkbox);
 
   var textarea = document.createElement("textarea");
+  textarea.placeholder = "novo item";
   textarea.value = text;
   textarea.spellcheck = false;
   textarea.addEventListener("input", (event) => resizeElement(event.target));
@@ -29,22 +110,64 @@ const appendListItem = ({ checked, text }) => {
   });
   item.append(textarea);
 
-  var removeButton = document.createElement("img");
-  removeButton.className = "removeButton";
-  removeButton.src = "images/crossMarkEmoji.svg";
-  removeButton.addEventListener("click", removeItem);
-  item.append(removeButton);
+  var removalWrapper = document.createElement("div");
+  removalWrapper.className = "removal-wrapper";
+
+  item.append(removalWrapper);
+
+  var removeItemButton = document.createElement("input");
+  removeItemButton.type = "image";
+  removeItemButton.className = "remove-item-button";
+  removeItemButton.src = "images/wastebasketEmoji.svg";
+  removeItemButton.alt = "Remove item.";
+  removeItemButton.addEventListener("click", () =>
+    removeItemButton.replaceWith(confirmationDialog)
+  );
+
+  removalWrapper.append(removeItemButton);
+
+  var confirmationDialog = document.createElement("div");
+  confirmationDialog.className = "confirmation-dialog";
+  confirmationDialog.addEventListener("mouseleave", () =>
+    confirmationDialog.replaceWith(removeItemButton)
+  );
+
+  var confirmationText = document.createElement("span");
+  confirmationText.className = "confirmation-text";
+  confirmationText.innerText = "Tem certeza?";
+
+  confirmationDialog.append(confirmationText);
+
+  var confirmationButtonsWrapper = document.createElement("div");
+  confirmationButtonsWrapper.className = "confirmation-buttons-wrapper";
+
+  confirmationDialog.append(confirmationButtonsWrapper);
+
+  var confirmRemovalButton = document.createElement("input");
+  confirmRemovalButton.className = "confirm-removal-button";
+  confirmRemovalButton.type = "image";
+  confirmRemovalButton.src = "images/greenTickEmoji.svg";
+  confirmRemovalButton.addEventListener("click", removeItem);
+  confirmationButtonsWrapper.append(confirmRemovalButton);
+  var cancelRemovalButton = document.createElement("input");
+  cancelRemovalButton.className = "cancel-removal-button";
+  cancelRemovalButton.type = "image";
+  cancelRemovalButton.src = "images/crossMarkEmoji.svg";
+  cancelRemovalButton.addEventListener("click", () =>
+    confirmationDialog.replaceWith(removeItemButton)
+  );
+  confirmationButtonsWrapper.append(cancelRemovalButton);
 
   list.append(item);
   resizeElement(textarea);
+
+  return item;
 };
 
 const createNewItem = () => {
-  appendListItem({ checked: false, text: "" });
-
-  const listItems = document.querySelectorAll("li");
-  const newItem = listItems[listItems.length - 1];
-  newItem.querySelector("textarea").focus();
+  appendListItem({ checked: false, text: "" })
+    .querySelector("textarea")
+    .focus();
 };
 
 document.addEventListener("keydown", (event) => {
@@ -69,9 +192,6 @@ const saveList = () => {
   window.localStorage.setItem("list", JSON.stringify(serializedList));
 };
 
-window.addEventListener("beforeunload", saveList);
-window.setInterval(saveList, 10 * 1000);
-
 const loadList = () => {
   const serializedList = JSON.parse(window.localStorage.getItem("list"));
   if (serializedList.length > 0) {
@@ -84,21 +204,23 @@ const loadList = () => {
 window.addEventListener("load", () => {
   loadList();
 
-  var newItemDiv = document.createElement("div");
-  newItemDiv.id = "newItemWrapper";
-  newItemDiv.addEventListener("click", createNewItem);
+  const list = document.getElementById("list");
+  const changeObserver = new MutationObserver((mutationList, observer) => {
+    for (const mutation of mutationList) {
+      if (["UL", "INPUT", "TEXTAREA"].includes(mutation.target.tagName)) {
+        saveList();
+        break;
+      }
+    }
+  });
+  const changeObserverOptions = {
+    subtree: true,
+    childList: true,
+    attributes: true,
+  };
+  changeObserver.observe(list, changeObserverOptions);
 
-  var plusSymbol = document.createElement("img");
-  plusSymbol.src = "images/plusEmoji.svg";
-  plusSymbol.alt = "Add-item symbol";
-  newItemDiv.append(plusSymbol);
-
-  var textarea = document.createElement("textarea");
-  textarea.readonly = true;
-  textarea.spellcheck = false;
-  textarea.value = "novo item...";
-  newItemDiv.append(textarea);
-
-  document.getElementById("listWrapper").appendChild(newItemDiv);
-  resizeElement(textarea);
+  const newItemWrapper = document.getElementById("new-item-wrapper");
+  newItemWrapper.addEventListener("click", createNewItem);
+  resizeElement(newItemWrapper.querySelector("textarea"));
 });

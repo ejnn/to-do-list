@@ -1,0 +1,154 @@
+$background-color: #bfbfa8;
+$foreground-color: #ffffe0;
+$font-size: 1.5rem;
+
+%visual-control {
+  margin: auto 0.2rem auto 0.2rem;
+
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background-color: $background-color;
+}
+
+header {
+  text-align: center;
+  background-color: $foreground-color;
+
+  margin-top: 5vw;
+  border-radius: 5% 5% 0 0;
+
+  width: 100%;
+  max-width: 38rem;
+}
+
+main {
+  text-align: center;
+  background-color: $foreground-color;
+
+  margin: 5vw;
+  margin-top: 0;
+  border-radius: 0 0 5% 5%;
+
+  width: 100%;
+  max-width: 38rem;
+}
+
+#list-wrapper {
+  padding: 1rem;
+  padding-right: 4rem;
+}
+
+#list {
+  list-style: none;
+
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: flex;
+  margin: 0.3rem 0;
+
+  input[type="checkbox"] {
+    @extend %visual-control;
+
+    margin-right: 0.5rem;
+
+    &:checked ~ textarea {
+      text-decoration: line-through;
+    }
+  }
+
+  .drag-handle {
+    @extend %visual-control;
+
+    box-sizing: border-box;
+
+    padding: 0.25rem;
+  }
+
+  .removal-wrapper {
+    @extend %visual-control;
+
+    position: relative;
+    flex-shrink: 0;
+
+    .remove-item-button {
+      @extend %visual-control;
+      margin: 0;
+
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      visibility: hidden;
+    }
+
+    .confirmation-dialog {
+      position: absolute;
+
+      bottom: 0;
+      left: 0;
+
+      .confirmation-text {
+        position: absolute;
+        bottom: 100%;
+        right: 10%;
+
+        font-size: $font-size;
+
+        white-space: nowrap;
+        background-color: $foreground-color;
+
+        padding: 0 1rem;
+        border-radius: 10%;
+      }
+
+      .confirmation-buttons-wrapper {
+        display: flex;
+
+        .confirm-removal-button,
+        .cancel-removal-button {
+          @extend %visual-control;
+
+          margin-left: 0;
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  &:hover .remove-item-button,
+  textarea:focus ~ .remove-item-button {
+    visibility: visible;
+  }
+}
+
+textarea {
+  font-size: $font-size;
+  resize: none;
+  background-color: transparent;
+
+  border: none;
+  margin: 0;
+
+  width: 100%;
+}
+
+#new-item-wrapper {
+  display: flex;
+  align-items: center;
+
+  .plus-symbol {
+    @extend %visual-control;
+
+    margin-right: 0.5rem;
+  }
+}

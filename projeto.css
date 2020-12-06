@@ -1,29 +1,39 @@
-:root {
-  --bg: #bfbfa8;
-  --fg: #ffffe0;
+#new-item-wrapper .plus-symbol, li .removal-wrapper .confirmation-dialog .confirmation-buttons-wrapper .confirm-removal-button,
+li .removal-wrapper .confirmation-dialog .confirmation-buttons-wrapper .cancel-removal-button, li .removal-wrapper .remove-item-button, li .removal-wrapper, li .drag-handle, li input[type=checkbox] {
+  margin: auto 0.2rem auto 0.2rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #bfbfa8;
+}
 
-  background-color: var(--bg);
+header {
+  text-align: center;
+  background-color: #ffffe0;
+  margin-top: 5vw;
+  border-radius: 5% 5% 0 0;
+  width: 100%;
+  max-width: 38rem;
 }
 
 main {
   text-align: center;
-  background-color: var(--fg);
-
+  background-color: #ffffe0;
   margin: 5vw;
-  border-radius: 5%;
-
+  margin-top: 0;
+  border-radius: 0 0 5% 5%;
   width: 100%;
-  max-width: 27rem;
+  max-width: 38rem;
 }
 
-#listWrapper {
-  padding: 2vw;
+#list-wrapper {
+  padding: 1rem;
+  padding-right: 4rem;
 }
 
 #list {
@@ -34,54 +44,72 @@ main {
 
 li {
   display: flex;
+  margin: 0.3rem 0;
 }
-
-li input[type="checkbox"] {
-  margin: 0.2rem;
+li input[type=checkbox] {
   margin-right: 0.5rem;
-
-  height: 1rem;
-  width: 1rem;
 }
-
-li input[type="checkbox"]:checked ~ textarea {
+li input[type=checkbox]:checked ~ textarea {
   text-decoration: line-through;
 }
-
-textarea {
-  font-size: 1rem;
-  resize: none;
-  background-color: transparent;
-
-  border: none;
+li .drag-handle {
+  box-sizing: border-box;
+  padding: 0.25rem;
+}
+li .removal-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+li .removal-wrapper .remove-item-button {
   margin: 0;
-
-  width: 100%;
-}
-
-li .removeButton {
+  position: absolute;
+  top: 0;
+  left: 0;
   visibility: hidden;
-
-  margin: 0.2rem;
-
-  width: 1rem;
-  height: 1rem;
 }
-
-li:hover .removeButton,
-li textarea:focus ~ .removeButton {
+li .removal-wrapper .confirmation-dialog {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+li .removal-wrapper .confirmation-dialog .confirmation-text {
+  position: absolute;
+  bottom: 100%;
+  right: 10%;
+  font-size: 1.5rem;
+  white-space: nowrap;
+  background-color: #ffffe0;
+  padding: 0 1rem;
+  border-radius: 10%;
+}
+li .removal-wrapper .confirmation-dialog .confirmation-buttons-wrapper {
+  display: flex;
+}
+li .removal-wrapper .confirmation-dialog .confirmation-buttons-wrapper .confirm-removal-button,
+li .removal-wrapper .confirmation-dialog .confirmation-buttons-wrapper .cancel-removal-button {
+  margin-left: 0;
+  margin-bottom: 0;
+}
+li:hover .remove-item-button,
+li textarea:focus ~ .remove-item-button {
   visibility: visible;
 }
 
-#newItemWrapper {
+textarea {
+  font-size: 1.5rem;
+  resize: none;
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  width: 100%;
+}
+
+#new-item-wrapper {
   display: flex;
   align-items: center;
 }
-
-#newItemWrapper img {
-  margin: 0.2rem;
+#new-item-wrapper .plus-symbol {
   margin-right: 0.5rem;
-
-  height: 1rem;
-  width: 1rem;
 }
+
+/*# sourceMappingURL=projeto.css.map */
