@@ -96,7 +96,7 @@ const appendListItem = ({ checked, text }) => {
   item.append(checkbox);
 
   var textarea = document.createElement("textarea");
-  textarea.placeholder = "novo item";
+  textarea.placeholder = "new item";
   textarea.value = text;
   textarea.spellcheck = false;
   textarea.addEventListener("input", (event) => resizeElement(event.target));
@@ -134,7 +134,7 @@ const appendListItem = ({ checked, text }) => {
 
   var confirmationText = document.createElement("span");
   confirmationText.className = "confirmation-text";
-  confirmationText.innerText = "Tem certeza?";
+  confirmationText.innerText = "Are you sure?";
 
   confirmationDialog.append(confirmationText);
 
@@ -145,17 +145,22 @@ const appendListItem = ({ checked, text }) => {
 
   var confirmRemovalButton = document.createElement("input");
   confirmRemovalButton.className = "confirm-removal-button";
+  confirmRemovalButton.setAttribute("aria-label", "Confirm item removal.");
   confirmRemovalButton.type = "image";
   confirmRemovalButton.src = "images/greenTickEmoji.svg";
   confirmRemovalButton.addEventListener("click", removeItem);
+
   confirmationButtonsWrapper.append(confirmRemovalButton);
+
   var cancelRemovalButton = document.createElement("input");
   cancelRemovalButton.className = "cancel-removal-button";
+  cancelRemovalButton.setAttribute("aria-label", "Cancel item removal.");
   cancelRemovalButton.type = "image";
   cancelRemovalButton.src = "images/crossMarkEmoji.svg";
   cancelRemovalButton.addEventListener("click", () =>
     confirmationDialog.replaceWith(removeItemButton)
   );
+
   confirmationButtonsWrapper.append(cancelRemovalButton);
 
   list.append(item);
