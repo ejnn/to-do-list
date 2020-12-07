@@ -200,7 +200,7 @@ const saveList = () => {
 
 const loadList = () => {
   const serializedList = JSON.parse(window.localStorage.getItem("list"));
-  if (serializedList.length > 0) {
+  if (serializedList) {
     for (const serializedItem of serializedList) {
       appendListItem(serializedItem);
     }
